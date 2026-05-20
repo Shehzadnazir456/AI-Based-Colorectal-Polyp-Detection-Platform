@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+/* Medical AI dashboard — purple gradient theme, soft lavender surfaces */
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --radius-xl: 1rem;
+  --shadow-glass: 0 8px 32px rgba(88, 28, 135, 0.12);
+  --shadow-glow: 0 0 40px rgba(139, 92, 246, 0.25);
+}
+
+@layer base {
+  html {
+    @apply antialiased;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply min-h-screen text-slate-800;
+    background:
+      radial-gradient(ellipse 120% 80% at 10% -10%, rgba(167, 139, 250, 0.35), transparent),
+      radial-gradient(ellipse 80% 50% at 90% 0%, rgba(99, 102, 241, 0.2), transparent),
+      linear-gradient(165deg, #f5f3ff 0%, #ede9fe 35%, #faf5ff 100%);
+  }
+}
+
+/* Glass panel utility */
+.glass {
+  @apply rounded-2xl border border-white/40 bg-white/60 shadow-[var(--shadow-glass)] backdrop-blur-xl;
+}
+
+.glass-strong {
+  @apply rounded-2xl border border-white/50 bg-white/75 shadow-[var(--shadow-glass)] backdrop-blur-2xl;
+}
+
+.glass-dark {
+  @apply rounded-2xl border border-violet-500/20 bg-violet-950/40 text-violet-50 shadow-lg backdrop-blur-xl;
+}
+
+.gradient-primary {
+  @apply bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.45) transparent;
+}
+
+/* Public home page */
+.bg-hero-gradient {
+  background: linear-gradient(135deg, #6a11cb 0%, #5b21b6 40%, #2575fc 100%);
+}
+
+.home-page-content {
+  @apply relative space-y-0;
+}
+
+.home-section {
+  @apply scroll-mt-20 py-8 md:py-10;
+}
+
+.home-section-header {
+  @apply mb-0;
+}
+
+.footer-pro {
+  background: linear-gradient(180deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+}
+
+.home-badge {
+  @apply inline-block rounded-full border border-violet-200/80 bg-violet-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-violet-700;
+}
+
+.home-card {
+  @apply rounded-2xl border border-white/60 bg-white/70 shadow-[var(--shadow-glass)] backdrop-blur-xl;
+}
+
+.home-stat-card {
+  @apply rounded-2xl border border-violet-100/80 bg-white/75 shadow-lg shadow-violet-500/5 backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-violet-500/15;
+}
+
+.home-info-card {
+  @apply rounded-2xl border border-violet-100/80 bg-white/80 shadow-md shadow-violet-500/5 backdrop-blur-sm transition duration-300 hover:-translate-y-1.5 hover:border-violet-200 hover:shadow-xl hover:shadow-violet-500/15;
+}
