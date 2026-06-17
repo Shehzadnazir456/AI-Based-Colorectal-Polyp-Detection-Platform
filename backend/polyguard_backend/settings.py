@@ -65,10 +65,14 @@ TEMPLATES = [
 WSGI_APPLICATION = "polyguard_backend.wsgi.application"
 
 DATABASES = {
-  "default": {
-    "ENGINE": "django.db.backends.sqlite3",
-    "NAME": BASE_DIR / "db.sqlite3",
-  }
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "fypproject",       # actual DB name you created in pgAdmin
+        "USER": "myuser",          # default PostgreSQL user
+        "PASSWORD": "fyp",  # the password you set
+        "HOST": "localhost",
+        "PORT": "5432",
+    }
 }
 
 AUTH_USER_MODEL = "accounts.User"
@@ -115,6 +119,6 @@ SIMPLE_JWT = {
   "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 

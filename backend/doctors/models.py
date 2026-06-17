@@ -11,3 +11,15 @@ class DoctorProfile(models.Model):
     def __str__(self):
         return f"DoctorProfile<{self.user.username}>"
 
+class Message(models.Model):
+    doctor = models.ForeignKey(DoctorProfile, on_delete=models.CASCADE, related_name='messages')
+    patient = models.ForeignKey('patients.PatientProfile', on_delete=models.CASCADE, related_name='messages')
+    sender_role = models.CharField(max_length=10, choices=[('doctor', 'Doctor'), ('patient', 'Patient')])
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"{self.sender_role} → {self.created_at:%Y-%m-%d %H:%M}"

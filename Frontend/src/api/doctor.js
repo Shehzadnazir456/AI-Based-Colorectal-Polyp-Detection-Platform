@@ -36,3 +36,13 @@ export function uploadDoctorPatientReport(id, formData) {
 export function deleteDoctorReport(reportId) {
   return client.delete(`doctor/report/delete/${reportId}/`)
 }
+
+/** GET /doctor/patient/:id/messages/ */
+export function getDoctorMessages(patientId) {
+  return client.get(`doctor/patient/${patientId}/messages/`)
+}
+
+/** POST /doctor/patient/:id/messages/send/ */
+export function sendDoctorMessage(patientId, payload) {
+  return client.post(`doctor/patient/${patientId}/messages/send/`, payload)
+}

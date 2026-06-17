@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Upload, Stethoscope, Trash2 } from 'lucide-react'
+import { Upload, Stethoscope, Trash2, MessageCircle } from 'lucide-react'
 import { PageHeader } from '../../components/ui/PageHeader.jsx'
 import { GlassCard } from '../../components/ui/GlassCard.jsx'
 import { Button } from '../../components/ui/Button.jsx'
 import { Textarea } from '../../components/ui/Textarea.jsx'
 import { Spinner } from '../../components/ui/Spinner.jsx'
 import { Badge } from '../../components/ui/Badge.jsx'
+import { ChatPanel } from '../../components/ui/ChatPanel.jsx'
 import * as doctorApi from '../../api/doctor.js'
 import { normalizeList, formatDate, getErrorMessage } from '../../utils/helpers.js'
 
@@ -90,6 +91,8 @@ export function PatientDetailPage() {
 
       {detail && !loading ? (
         <div className="grid gap-6 lg:grid-cols-3">
+
+          {/* Patient info */}
           <GlassCard className="lg:col-span-1">
             <div className="flex items-center gap-3">
               <Stethoscope className="h-8 w-8 text-violet-600" />
@@ -110,6 +113,7 @@ export function PatientDetailPage() {
             </dl>
           </GlassCard>
 
+          {/* Add clinical note */}
           <GlassCard className="lg:col-span-2">
             <h3 className="text-lg font-semibold text-slate-900">Add clinical note</h3>
             <form onSubmit={addHistory} className="mt-4 space-y-3">
@@ -127,6 +131,7 @@ export function PatientDetailPage() {
             </form>
           </GlassCard>
 
+          {/* Reports */}
           <GlassCard className="lg:col-span-3">
             <h3 className="text-lg font-semibold text-slate-900">Reports & AI output</h3>
             <div className="mt-4 space-y-3">
@@ -135,7 +140,18 @@ export function PatientDetailPage() {
               ) : (
                 reports.map((r) => {
                   const rid = r.id ?? r.pk
-                  const pred = r.prediction ?? r.label ?? r.result ?? r.ai_result
+
+                  // Parse result object safely
+                  const rawResult = r.result ?? r.ai_result
+                  const parsed = rawResult
+                    ? (typeof rawResult === 'string' ? JSON.parse(rawResult) : rawResult)
+                    : null
+                  const pred = parsed?.polyp_detected === true
+                    ? 'Polyp Detected'
+                    : parsed?.polyp_detected === false
+                      ? 'No Polyp Found'
+                      : null
+
                   return (
                     <div
                       key={rid}
@@ -146,15 +162,24 @@ export function PatientDetailPage() {
                         <p className="text-xs text-slate-500">
                           {formatDate(r.created_at || r.uploaded_at || r.date)}
                         </p>
-                        {pred != null ? <p className="mt-2 text-sm text-violet-800">AI: {String(pred)}</p> : null}
+                        {pred != null ? (
+                          <p className={`mt-2 text-sm font-medium ${pred === 'Polyp Detected' ? 'text-red-600' : 'text-emerald-600'}`}>
+                            AI: {pred}
+                          </p>
+                        ) : null}
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        <Link to={`/doctor/patients/${patientId}/result/${rid}`} state={{ result: r }}>
+                        <Link to={`/doctor/patients/${patientId}/result/${rid}`} state={{ result: parsed }}>
                           <Button variant="secondary" size="sm" type="button">
                             View AI result
                           </Button>
                         </Link>
-                        <Button variant="danger" size="sm" type="button" onClick={() => deleteReport(rid)}>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          type="button"
+                          onClick={() => deleteReport(rid)}
+                        >
                           <Trash2 className="h-4 w-4" />
                           Delete
                         </Button>
@@ -166,6 +191,7 @@ export function PatientDetailPage() {
             </div>
           </GlassCard>
 
+          {/* Medical history timeline */}
           <GlassCard className="lg:col-span-3">
             <h3 className="text-lg font-semibold text-slate-900">Medical history timeline</h3>
             <ul className="mt-4 space-y-3">
@@ -186,6 +212,21 @@ export function PatientDetailPage() {
               )}
             </ul>
           </GlassCard>
+
+          {/* Chat with patient */}
+          <GlassCard className="lg:col-span-3">
+            <div className="mb-4 flex items-center gap-2">
+              <MessageCircle className="h-5 w-5 text-violet-600" />
+              <h3 className="text-lg font-semibold text-slate-900">Chat with patient</h3>
+            </div>
+            <ChatPanel
+              currentRole="doctor"
+              otherName={patientName || `Patient #${patientId}`}
+              fetchMessages={() => doctorApi.getDoctorMessages(patientId)}
+              postMessage={(msg) => doctorApi.sendDoctorMessage(patientId, { message: msg })}
+            />
+          </GlassCard>
+
         </div>
       ) : null}
     </div>

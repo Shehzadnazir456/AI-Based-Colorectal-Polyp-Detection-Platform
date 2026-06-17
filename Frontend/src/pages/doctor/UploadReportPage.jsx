@@ -11,6 +11,7 @@ export function UploadReportPage() {
   const { patientId } = useParams()
   const navigate = useNavigate()
   const fileRef = useRef(null)
+  const scrollRef = useRef(null)
   const [file, setFile] = useState(null)
   const [preview, setPreview] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -21,6 +22,15 @@ export function UploadReportPage() {
     setFile(f || null)
     if (preview) URL.revokeObjectURL(preview)
     setPreview(f ? URL.createObjectURL(f) : null)
+  }
+
+  // ✅ Save scroll position before opening file picker and restore after
+  const onBrowse = () => {
+    scrollRef.current = window.scrollY
+    fileRef.current?.click()
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: scrollRef.current, behavior: 'instant' })
+    })
   }
 
   const onSubmit = async (e) => {
@@ -34,13 +44,18 @@ export function UploadReportPage() {
     try {
       const formData = new FormData()
       formData.append('image', file)
-      formData.append('file', file)
 
       const { data } = await doctorApi.uploadDoctorPatientReport(patientId, formData)
       const reportId = data?.id ?? data?.pk ?? data?.report_id
+
+      // ✅ Safely parse result in case it comes back as a string
+      const result = typeof data.result === 'string'
+        ? JSON.parse(data.result)
+        : data.result
+
       navigate(`/doctor/patients/${patientId}/result/${reportId ?? ''}`, {
         replace: true,
-        state: { result: data },
+        state: { result },
       })
     } catch (err) {
       setError(getErrorMessage(err))
@@ -68,16 +83,19 @@ export function UploadReportPage() {
           </h3>
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onPick} />
-            <Button type="button" variant="secondary" className="w-full" onClick={() => fileRef.current?.click()}>
+
+            {/* ✅ use onBrowse instead of direct click */}
+            <Button type="button" variant="secondary" className="w-full" onClick={onBrowse}>
               Browse files
             </Button>
-            {file ? (
+
+            {file && (
               <p className="text-sm text-slate-600">
                 Selected: <strong>{file.name}</strong>
               </p>
-            ) : null}
-            {error ? <p className="text-sm text-rose-600">{error}</p> : null}
-            <Button type="submit" className="w-full" disabled={loading}>
+            )}
+            {error && <p className="text-sm text-rose-600">{error}</p>}
+            <Button type="submit" className="w-full" disabled={loading || !file}>
               {loading ? 'Uploading & analyzing…' : 'Run AI analysis'}
             </Button>
           </form>
@@ -88,9 +106,10 @@ export function UploadReportPage() {
             <Sparkles className="h-5 w-5 text-indigo-500" />
             Preview
           </h3>
-          <div className="mt-6 flex min-h-[240px] items-center justify-center overflow-hidden rounded-2xl border border-dashed border-violet-200/80 bg-violet-50/30">
+          {/* ✅ fixed h-[240px] instead of min-h to prevent layout shift + auto-scroll */}
+          <div className="mt-6 flex h-[240px] items-center justify-center overflow-hidden rounded-2xl border border-dashed border-violet-200/80 bg-violet-50/30">
             {preview ? (
-              <img src={preview} alt="Upload preview" className="max-h-80 w-full object-contain" />
+              <img src={preview} alt="Upload preview" className="h-full w-full object-contain" />
             ) : (
               <p className="px-4 text-center text-sm text-slate-500">No image selected yet.</p>
             )}

@@ -32,9 +32,9 @@ class MedicalHistorySerializer(serializers.ModelSerializer):
         fields = ("id", "disease", "medications", "allergies", "notes", "created_at")
         read_only_fields = ("id", "created_at")
 
-
 class ReportSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
+    result    = serializers.JSONField()   # ✅ explicitly serialize as JSON
 
     class Meta:
         model = Report
@@ -48,4 +48,3 @@ class ReportSerializer(serializers.ModelSerializer):
         if request:
             return request.build_absolute_uri(obj.image.url)
         return obj.image.url
-

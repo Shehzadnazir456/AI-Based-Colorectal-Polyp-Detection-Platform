@@ -19,3 +19,13 @@ export function getPatientHistory() {
 export function getPatientReports() {
   return client.get('patient/reports/')
 }
+
+/** GET /patient/messages/ */
+export function getPatientMessages() {
+  return client.get('patient/messages/')
+}
+
+/** POST /patient/messages/send/ */
+export function sendPatientMessage(payload) {
+  return client.post('patient/messages/send/', payload)
+}

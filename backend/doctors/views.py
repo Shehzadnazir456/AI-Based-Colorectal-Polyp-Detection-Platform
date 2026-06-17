@@ -5,10 +5,11 @@ from rest_framework.response import Response
 
 from accounts.permissions import IsDoctor
 from doctors.ai_model import run_ai_model
-from doctors.models import DoctorProfile
+from doctors.models import DoctorProfile, Message
 from doctors.serializers import (
     DoctorProfileSerializer,
     MedicalHistoryCreateSerializer,
+    MessageSerializer,
     PatientDetailSerializer,
     PatientListItemSerializer,
     ReportUploadSerializer,
@@ -83,16 +84,28 @@ def doctor_upload_report_view(request, patient_id: int):
     serializer = ReportUploadSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     report = serializer.save(patient=patient)
-    report.result = run_ai_model(report.image)
+
+    result = run_ai_model(report.image)
+    report.result = result
     report.save(update_fields=["result"])
+
+    # If the image was invalid, delete the report and return a clear error
+    if result.get("error"):
+        report.delete()
+        return Response(
+            {"detail": result["error_message"]},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     create_notification(
         user=patient.user,
         title="New AI report available",
         message="A new report was uploaded and analyzed.",
     )
-    return Response(ReportSerializer(report, context={"request": request}).data, status=status.HTTP_201_CREATED)
-
+    return Response(
+        ReportSerializer(report, context={"request": request}).data,
+        status=status.HTTP_201_CREATED,
+    )
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated, IsDoctor])
@@ -109,3 +122,42 @@ def doctor_delete_report_view(request, report_id: int):
     report.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated, IsDoctor])
+def doctor_get_messages_view(request, patient_id: int):
+    doctor = DoctorProfile.objects.get(user=request.user)
+    patient = PatientProfile.objects.filter(id=patient_id).first()
+    if not patient:
+        return Response({"detail": "Patient not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    messages = Message.objects.filter(doctor=doctor, patient=patient)
+    serializer = MessageSerializer(messages, many=True)
+    return Response(serializer.data)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated, IsDoctor])
+def doctor_send_message_view(request, patient_id: int):
+    doctor = DoctorProfile.objects.get(user=request.user)
+    patient = PatientProfile.objects.filter(id=patient_id).first()
+    if not patient:
+        return Response({"detail": "Patient not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    text = request.data.get("message", "").strip()
+    if not text:
+        return Response({"detail": "Message cannot be empty."}, status=status.HTTP_400_BAD_REQUEST)
+
+    msg = Message.objects.create(
+        doctor=doctor,
+        patient=patient,
+        sender_role="doctor",
+        message=text,
+    )
+
+    create_notification(
+        user=patient.user,
+        title="New message from your doctor",
+        message=text[:100],
+    )
+    return Response(MessageSerializer(msg).data, status=status.HTTP_201_CREATED)

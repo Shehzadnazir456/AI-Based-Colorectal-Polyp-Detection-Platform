@@ -4,7 +4,13 @@ from doctors.models import DoctorProfile
 from patients.models import MedicalHistory, PatientProfile, Report
 from patients.serializers import MedicalHistorySerializer, ReportSerializer
 
+from doctors.models import Message  # add to existing import if needed
 
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ['id', 'sender_role', 'message', 'created_at']
+        
 class DoctorProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email", read_only=True)
     first_name = serializers.CharField(source="user.first_name", required=False)
@@ -81,4 +87,5 @@ class ReportUploadSerializer(serializers.ModelSerializer):
         model = Report
         fields = ("id", "image", "result", "created_at")
         read_only_fields = ("id", "result", "created_at")
+
 

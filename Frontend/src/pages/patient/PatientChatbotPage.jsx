@@ -1,14 +1,14 @@
 import { PageHeader } from '../../components/ui/PageHeader.jsx'
-import { ChatPanel } from '../../components/chat/ChatPanel.jsx'
+import { AIChatPanel } from '../../components/chat/AIChatPanel.jsx'  // ✅
 
 export function PatientChatbotPage() {
   return (
     <div>
       <PageHeader
         title="Health assistant"
-        subtitle="General education about screening and reports — not personalized medical advice. Contact your clinician for decisions."
+        subtitle="General education about screening and reports — not personalized medical advice."
       />
-      <ChatPanel welcome="Hello — I can explain terminology in your reports or how polyp screening works at a high level. What would you like to know?" />
+      <AIChatPanel welcome="Hello! I'm PolypCare AI. How can I help you today?" />
     </div>
   )
 }

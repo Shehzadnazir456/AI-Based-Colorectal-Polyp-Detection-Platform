@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* Medical AI dashboard — purple gradient theme, soft lavender surfaces */
 @theme {
@@ -11,7 +12,9 @@
 @layer base {
   html {
     @apply antialiased;
-    scroll-behavior: smooth;
+    html {
+  scroll-behavior: auto; /* remove smooth from global html */
+}
   }
   body {
     @apply min-h-screen text-slate-800;
@@ -20,6 +23,36 @@
       radial-gradient(ellipse 80% 50% at 90% 0%, rgba(99, 102, 241, 0.2), transparent),
       linear-gradient(165deg, #f5f3ff 0%, #ede9fe 35%, #faf5ff 100%);
   }
+}
+/* Fix markdown bullet points in chat */
+.chat-markdown ul {
+  list-style-type: disc !important;
+  padding-left: 1.25rem !important;
+  margin-bottom: 8px !important;
+}
+
+.chat-markdown ol {
+  list-style-type: decimal !important;
+  padding-left: 1.25rem !important;
+  margin-bottom: 8px !important;
+}
+
+.chat-markdown li {
+  display: list-item !important;
+  margin-bottom: 4px !important;
+}
+
+.chat-markdown h1, .chat-markdown h2, .chat-markdown h3 {
+  font-weight: 700 !important;
+  margin: 10px 0 5px !important;
+}
+
+.chat-markdown p {
+  margin-bottom: 8px !important;
+}
+
+.chat-markdown strong {
+  font-weight: 600 !important;
 }
 
 /* Glass panel utility */
