@@ -20,7 +20,7 @@ const stats = [
   {
     icon: Brain,
     label: 'AI Accuracy Rate',
-    end: 94.6,
+    end: 78.6,
     suffix: '%',
     decimals: 1,
     gradient: 'from-fuchsia-500 to-violet-600',

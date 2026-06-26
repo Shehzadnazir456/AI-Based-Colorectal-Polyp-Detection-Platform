@@ -12,10 +12,10 @@ export const HOME_IMAGES = {
     'https://images.unsplash.com/photo-1559757175-570ebade2525?auto=format&fit=crop&w=1920&q=80',
   ],
   aboutPolyp:
-    'https://images.unsplash.com/photo-1551076805-e186903a585a?auto=format&fit=crop&w=900&q=80',
+    'https://drhoffman.com/wp-content/uploads/2025/11/is_colonoscopyexplanation-scaled.jpg',
   infoCards: [
-    'https://images.unsplash.com/photo-1505751172876-4aef1bcdf015?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1579684385127-1ef15fdf5bfc?auto=format&fit=crop&w=600&q=80',
+    'https://admin.progenesisivf.com/media/uploads/seo/image/497.jpg',
+    'https://images.medicinenet.com/images/illustrations/colon_cancer.jpg',
     'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=600&q=80',
     'https://images.unsplash.com/photo-1519494026892-80bbd2d6df0c?auto=format&fit=crop&w=600&q=80',
   ],

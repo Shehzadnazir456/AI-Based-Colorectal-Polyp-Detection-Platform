@@ -67,9 +67,9 @@ WSGI_APPLICATION = "polyguard_backend.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "fypproject",       # actual DB name you created in pgAdmin
-        "USER": "myuser",          # default PostgreSQL user
-        "PASSWORD": "fyp",  # the password you set
+        "NAME": "fypproject",       
+        "USER": "myuser",         
+        "PASSWORD": "fyp", 
         "HOST": "localhost",
         "PORT": "5432",
     }
