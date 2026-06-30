@@ -2,12 +2,6 @@
 
 PolyGuard AI is a full-stack web application that assists in the early detection of colorectal polyps from colonoscopy images using a deep learning segmentation model, combined with an AI-powered chatbot for report explanation and patient/clinician support.
 
-## Final Year Project (FYP)
-
-- **Team:** Shehzad Nazir, Sardar Huzaifa, Sayyam Abbasi
-- **Supervisor:** Mr. Sana Ullah Shahbaz
-- **Institution:** International Islamic University Islamabad (IIUI), BS Software Engineering
-
 ## Overview
 
 Colorectal cancer is largely preventable when polyps are detected and removed early. PolyGuard AI streamlines this process by allowing clinicians to upload colonoscopy images, automatically segment and detect polyps using a trained EfficientUNet model, classify risk, and generate patient-friendly explanations via an integrated LLM chatbot.
